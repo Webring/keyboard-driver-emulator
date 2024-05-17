@@ -67,7 +67,25 @@ keyboard_keys = {
     Qt.Key_F9: "F9",
     Qt.Key_F10: "F10",
     Qt.Key_F11: "F11",
-    Qt.Key_F12: "F12"
+    Qt.Key_F12: "F12",
+    Qt.Key_AsciiTilde: "~",
+    Qt.Key_Backslash: "\\",
+    Qt.Key_BracketLeft: "[",
+    Qt.Key_BracketRight: "]",
+    Qt.Key_Semicolon: ";",
+    Qt.Key_Apostrophe: "'",
+    Qt.Key_Comma: ",",
+    Qt.Key_Period: ".",
+    Qt.Key_Slash: "/",
+    Qt.Key_Minus: "-",
+    Qt.Key_Equal: "=",
+    Qt.Key_Print: "Print Screen",
+    Qt.Key_ScrollLock: "Scroll Lock",
+    Qt.Key_Pause: "Pause",
+    Qt.Key_NumLock: "Num Lock",
+    Qt.Key_Super_L: "Left Windows",
+    Qt.Key_Super_R: "Right Windows",
+    Qt.Key_Menu: "Menu"
 }
 
 keyboard_modifiers = {
