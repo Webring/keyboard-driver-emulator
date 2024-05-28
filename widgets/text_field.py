@@ -1,6 +1,6 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QEvent
 from PyQt5.QtGui import QKeyEvent
-from PyQt5.QtWidgets import QTextEdit
+from PyQt5.QtWidgets import QTextEdit, QApplication
 
 from widgets.utils import check_modifiers
 
@@ -24,7 +24,8 @@ class TextField(QTextEdit):
 
         key = self.parent.keys.get(scancode, None)
         if key is not None:
-            self.pressed_keys.add(scancode)
+            if event.key() != -1:
+                self.pressed_keys.add(scancode)
 
             key.extra = self.global_extra
 
@@ -50,3 +51,20 @@ class TextField(QTextEdit):
     def keyReleaseEvent(self, event):
         scancode = event.nativeScanCode()
         self.pressed_keys.discard(scancode)
+
+    def emulate_key_press_function(self, scancode):
+        def function():
+            event = QKeyEvent(
+                QEvent.KeyPress,
+                -1,
+                Qt.NoModifier,
+                scancode,
+                0x41,
+                0x0,
+                '',
+                False,
+                1
+            )
+            QApplication.postEvent(self, event)
+
+        return function

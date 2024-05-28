@@ -3,15 +3,16 @@ import os.path
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QAction, QWidget, QHBoxLayout, QPushButton, QFileDialog, \
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QAction, QWidget, QHBoxLayout, QFileDialog, \
     QMessageBox, QLabel
 from keyboard.button import KeyboardKey
+from widgets.button import Button
 from widgets.edit_key_parameters_window import EditKeyParametersWindow
 from widgets.text_field import TextField
 from widgets.utils import widget_with_layout
 
 
-def create_keyboard_widget(placement, layout, click_function=None):
+def create_keyboard_widget(placement, layout, left_click_function=None, right_click_function=None):
     keyboard_layout = QVBoxLayout()
 
     for line in placement:
@@ -26,12 +27,14 @@ def create_keyboard_widget(placement, layout, click_function=None):
 
                 key_name = keyboard_key.name if keyboard_key is not None else f"SC{scancode}"
 
-                push_button = QPushButton(key_name)
+                push_button = Button(key_name)
                 push_button.setStyleSheet("QPushButton { padding: 10px; }")
                 if keyboard_key is None or keyboard_key.keycode < 0:
                     push_button.setDisabled(True)
-                if click_function is not None:
-                    push_button.clicked.connect(click_function(scancode))
+                if left_click_function is not None:
+                    push_button.clicked.connect(left_click_function(scancode))
+                if right_click_function is not None:
+                    push_button.right_button_clicked = right_click_function(scancode)
                 line_layout.addWidget(push_button)
 
             line_layout.setStretch(i, int(size * 4))
@@ -118,6 +121,12 @@ class KeyboardDriverMainWindow(QMainWindow):
 
         self._load_placement(file_path)
 
+    def keyReleaseEvent(self, event):
+        self.textbox.keyReleaseEvent(event)
+
+    def keyPressEvent(self, event):
+        self.textbox.keyPressEvent(event)
+
     def _load_placement(self, file_path):
         try:
             with open(file_path, 'r') as file:
@@ -177,7 +186,7 @@ class KeyboardDriverMainWindow(QMainWindow):
         if not self.keys_placement:
             new_widget = QLabel("Откройте файл размещения")
         else:
-            new_widget = create_keyboard_widget(self.keys_placement, self.keys, self.open_key_param_editor)
+            new_widget = create_keyboard_widget(self.keys_placement, self.keys, self.textbox.emulate_key_press_function, self.open_key_param_editor)
         self.base_layout.replaceWidget(self.keyboard_widget, new_widget)
         self.keyboard_widget.deleteLater()
         self.keyboard_widget = new_widget
